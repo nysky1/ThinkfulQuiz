@@ -10,18 +10,18 @@ const QUIZ =  {
         userAnswerIndex: 0,
         correctAnswerIndex: 1
       }
-      // ,{
-      //   questionText: 'In which MJ video does Michael appear on a sidewalk with light-up tiles?',
-      //   answers: ["Billie Jean", "Beat It", "Thriller", "PYT - Pretty Young Thing" ],
-      //   userAnswerIndex: 0,
-      //   correctAnswerIndex: 0
-      // },
-      // {
-      //   questionText: 'What was the original title of "Thriller?"',
-      //   answers: ["Moonlight", "The Dark of Night", "Star Light", "Thriller (it was always called Thriller)" ],
-      //   userAnswerIndex: 0,
-      //   correctAnswerIndex: 2
-      // }
+      ,{
+        questionText: 'In which MJ video does Michael appear on a sidewalk with light-up tiles?',
+        answers: ["Billie Jean", "Beat It", "Thriller", "PYT - Pretty Young Thing" ],
+        userAnswerIndex: 0,
+        correctAnswerIndex: 0
+      },
+      {
+        questionText: 'What was the original title of "Thriller?"',
+        answers: ["Moonlight", "The Dark of Night", "Star Light", "Thriller (it was always called Thriller)" ],
+        userAnswerIndex: 0,
+        correctAnswerIndex: 2
+      }
      ]//end Questions Array
   }; //end QUIZ object
   

@@ -56,6 +56,7 @@ header h4,.scoreTable h4 {
 .coverWrapper {
     margin:25px auto;
     text-align: center;
+    
 }
 .coverWrapper.mask {
     opacity: .7;
@@ -63,6 +64,9 @@ header h4,.scoreTable h4 {
 .imgCover {
     height:300px;
     width: 300px;    
+}
+.topImage {
+    border:solid 1px #fff;
 }
 button.next {
     background: #d6a33e;
@@ -81,6 +85,9 @@ button:hover {
     width:100%;
     margin: 0 auto;
     text-align: center;
+}
+.questionTable li {
+    font-size: 23px;
 }
 
 ul {

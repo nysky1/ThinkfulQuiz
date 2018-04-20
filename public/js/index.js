@@ -1,51 +1,32 @@
 'use strict';
 const isDebug = true;
 
+/* EVENT HANDLERS */
 $('.startQuiz').click(function () {
     toggleBackground(false);
     loadQuiz();
 });
+/* DELEGATES */
 $('.js-questionAnswerWrapper').on('click', `.js-resetQuiz`, function (event) {
     resetQuiz();
     toggleCoverImage()
     toggleBackground(false);
-    loadQuiz(); 
+    loadQuiz();
 });
 $('.js-questionAnswerWrapper').on('click', `.js-grade`, function (event) {
-    let answerIndex = getAnswerKeyfromEvent(event.currentTarget);
-    let bIsValid = validateEntry(answerIndex); 
+    let answerIndex = getAnswerIndexfromEvent(event.currentTarget);
+    let bIsValid = validateEntry(answerIndex);
     if (bIsValid) {
         dWrite('grading question');
         let answerHtml = generateGradeQuestionTemplate(getCurrentQuestion(), answerIndex);
         toggleCoverImage();
-        
+
         $('.js-questionAnswerWrapper').html(answerHtml);
     };
 })
 $('.js-questionAnswerWrapper').on('click', `.js-next`, function (event) {
     advanceQuestion();
 })
-function advanceQuestion() {
-    QUIZ.currentQuestionIndex += 1;
-    toggleCoverImage();
-
-    if (QUIZ.currentQuestionIndex > QUIZ.questions.length - 1) {
-        dWrite("Exiting Quiz to Grade View");
-        handleSummaryView();  
-        return false;      
-    }
-
-    dWrite("Advancing Question");
-    generateQuestion();
-}
-function getAnswerKeyfromEvent(item) {
-    let index = -1;
-    $('.rdoAnswer').each(function(key, value ) {
-       if (value.checked) {index = key; };        
-    })
-    dWrite( (index > -1)? `${index} answer was selected` :'No Answer was selected');
-    return index;
-}
 function generateQuestion() {
     /* Calls the Question Builder HTML and Increment the Question Index */
     let q = generateQuestionTemplate(getCurrentQuestion());
@@ -70,23 +51,16 @@ function generateQuestionTemplate(item) {
     </section>`;
     return q;
 }
-function updateScore(isCorrect) {
-    $('.score').removeClass("hidden");
-    QUIZ.scoreCorrect += (isCorrect) ? 1 : 0;          //give credit to user if correct.
-    QUIZ.scoreIncorrect += (!isCorrect) ? 1 : 0;          //increment incorrec.
-    $('.js-score-correct').html(QUIZ.scoreCorrect);
-    $('.js-score-incorrect').html(QUIZ.scoreIncorrect);
-}
-function generateGradeQuestionTemplate(questionItem, answerIndex) {   
-   let isCorrect = questionItem.correctAnswerIndex === answerIndex;
-   
-   questionItem.userAnswerIndex = answerIndex;  //mark the user answer in the array for tallying later.
-   updateScore(isCorrect);
-   dWrite(QUIZ);
+function generateGradeQuestionTemplate(questionItem, answerIndex) {
+    let isCorrect = questionItem.correctAnswerIndex === answerIndex;
 
-   let answerHtml = `<section role="content">
+    questionItem.userAnswerIndex = answerIndex;  //mark the user answer in the array for tallying later.
+    updateScore(isCorrect);
+    dWrite(QUIZ);
+
+    let answerHtml = `<section role="content">
         <div class="col-12">
-            <img src="/images/${(isCorrect) ? "Moonwalk" : "HeadShake" }.gif" height=300 width=300 alt="${(isCorrect) ? "Michael does the moon walk" : "Michael shakes his head 'No'" }" />
+            <img class="topImage" src="/images/${(isCorrect) ? "Moonwalk" : "HeadShake"}.gif" height=300 width=300 alt="${(isCorrect) ? "Michael does the moon walk" : "Michael shakes his head 'No'"}" />
             <div class="answerTable">
                 <h4 class="${(isCorrect) ? "correctGreen" : "incorrectRed"}" >You are ${(isCorrect) ? "Correct" : "Incorrect"}!</h4>
                 <h3>The correct answer is ${questionItem.answers[questionItem.correctAnswerIndex]}.</h3>
@@ -98,14 +72,14 @@ function generateGradeQuestionTemplate(questionItem, answerIndex) {
     </section>`;
     return answerHtml;
 }
-function generateSummaryView() {   
+function generateSummaryView() {
     dWrite('Building Summary View');
-    
+
     let didWell = QUIZ.scoreCorrect > QUIZ.scoreIncorrect;
     let summaryHtml = `<section role="content">
          <div class="col-12">
             
-             <img src="/images/${(didWell) ? "Moonwalk" : "HeadShake" }.gif" height=300 width=300 alt="${(didWell) ? "Michael does the moon walk" : "Michael shakes his head 'No'" }" />
+             <img src="/images/${(didWell) ? "Moonwalk" : "HeadShake"}.gif" height=300 width=300 alt="${(didWell) ? "Michael does the moon walk" : "Michael shakes his head 'No'"}" />
              <div class="scoreSummary scoreTable">
                 <h4>Correct: ${QUIZ.scoreCorrect}</h4>
              </div>
@@ -120,10 +94,9 @@ function generateSummaryView() {
              </div>
          </div>
      </section>`;
-     return summaryHtml;
- }
-
- function handleSummaryView() {
+    return summaryHtml;
+}
+function handleSummaryView() {
     let sView = generateSummaryView();
     $('.js-questionAnswerWrapper').html(sView);
     toggleCoverImage();
@@ -133,29 +106,43 @@ function generateSummaryView() {
     dWrite(`Score Incorrect: ${QUIZ.scoreIncorrect}`);
     dWrite(`Question Count: ${QUIZ.questions.length}`);
 }
-function resetQuiz() {
-    dWrite('Resetting Quiz');
-    
-    QUIZ.scoreCorrect = 0;
-    QUIZ.scoreIncorrect = 0;
-    QUIZ.currentQuestionIndex = 0;
-    QUIZ.questions.forEach((item) => {
-        item.userAnswerIndex = 0;
-    });
+function advanceQuestion() {
+    QUIZ.currentQuestionIndex += 1;
+    toggleCoverImage();
+
+    if (QUIZ.currentQuestionIndex > QUIZ.questions.length - 1) {
+        dWrite("Exiting Quiz to Grade View");
+        handleSummaryView();
+        return false;
+    }
+
+    dWrite("Advancing Question");
+    generateQuestion();
 }
+function updateScore(isCorrect) {
+    //show the score panel and update values
+    $('.score').removeClass("hidden");
+    QUIZ.scoreCorrect += (isCorrect) ? 1 : 0;          //give credit to user if correct.
+    QUIZ.scoreIncorrect += (!isCorrect) ? 1 : 0;          //increment incorrec.
+    $('.js-score-correct').html(QUIZ.scoreCorrect);
+    $('.js-score-incorrect').html(QUIZ.scoreIncorrect);
+}
+/* CLASS TOGGLES */
 function toggleBackground(resetToInit) {
     //Hides the Intro and adds a mask to the Cover Image
     (resetToInit) ? $('#introWrapper').show() : $('#introWrapper').hide();
     $('.coverWrapper').addClass('mask');
-    dWrite('Adding Mask');    
+    dWrite('Adding Mask');
 }
 function toggleCoverImage() {
     $('.imgCover').toggleClass('hidden');
-    dWrite('Cover Image Hidden is:' + $('.imgCover').hasClass('hidden')); 
+    dWrite('Cover Image Hidden is:' + $('.imgCover').hasClass('hidden'));
 }
 function toggleFooter() {
     $('.footerWrapper').toggleClass('hidden');
 }
+/* END CLASS TOGGLES */
+/* INDEX FUNCTIONS */
 function getCurrentQuestionIndex() {
     return QUIZ.currentQuestionIndex;
 }
@@ -163,10 +150,22 @@ function getCurrentQuestion() {
     let questionItem = QUIZ.questions[getCurrentQuestionIndex()];
     return questionItem;
 }
+function getAnswerIndexfromEvent(item) {
+    let index = -1;
+    $('.rdoAnswer').each(function (key, value) {
+        if (value.checked) { index = key; };
+    })
+    dWrite((index > -1) ? `${index} answer was selected` : 'No Answer was selected');
+    return index;
+}
+/* END INDEX FUNCTIONS */
+
 function loadQuiz() {
-    
-    $('.js-questionCount').html(QUIZ.questions.length)  
+    //generate the first question
     generateQuestion();
+
+    //init the footer question count
+    $('.js-questionCount').html(QUIZ.questions.length)
 
     //show the footer
     toggleFooter();
@@ -174,9 +173,19 @@ function loadQuiz() {
     dWrite(`Score Correct: ${QUIZ.scoreCorrect}`);
     dWrite(`Score Incorrect: ${QUIZ.scoreIncorrect}`);
     dWrite(`Question Count: ${QUIZ.questions.length}`);
-    dWrite(`Answer Count: ${QUIZ.questions[0].answers.length}`);    
+    dWrite(`Answer Count: ${QUIZ.questions[0].answers.length}`);
 }
+function resetQuiz() {
+    dWrite('Resetting Quiz');
 
+    QUIZ.scoreCorrect = 0;
+    QUIZ.scoreIncorrect = 0;
+    QUIZ.currentQuestionIndex = 0;
+    QUIZ.questions.forEach((item) => {
+        item.userAnswerIndex = 0;
+    });
+}
+/* BEGIN VALIDATION */
 function validateEntry(answerIndex) {
     if (answerIndex === -1) {
         $('.validator').removeClass("hidden");
@@ -187,6 +196,7 @@ function validateEntry(answerIndex) {
         return true;
     }
 }
+/* END VALIDATION */
 function dWrite(item) {
-    (isDebug) ? console.log(`${item}`) : '';    
+    (isDebug) ? console.log(`${item}`) : '';
 }
