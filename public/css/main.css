@@ -89,6 +89,14 @@ button:hover {
 .questionTable li {
     font-size: 23px;
 }
+.questionTable h4 {
+    margin:0;
+}
+fieldset {
+    border: solid 1px #999;
+    max-width: 400px;
+    margin:0 auto;
+}
 
 ul {
     list-style-type: none;
@@ -129,6 +137,70 @@ footer {
 }
 @media only screen and (min-width: 640px) {
     body {
-        background: url('/images/DanceFloor.jpg') center center repeat-x;
+        background: url('/images/MJBackground.jpg') #000 no-repeat;
+        background-size: 50%;
+        background-position: -40% 100px;
     }
 }
+
+/*iPad landscape*/
+@media only screen and (max-height: 768px) and ( orientation: landscape) {
+    .topImage {
+        height: 150px;
+        width: 150px;
+    }
+    .questionTable h4, .questionTable li {
+        font-size: 16px;
+    }
+}   
+/*iPhone 6/7/8 and Samsung S5 */
+@media only screen and (max-width: 640px) {
+    .topImage {
+        height: 150px;
+        width: 150px;
+    }
+    .questionTable h4, .questionTable li {
+        font-size: 18px;
+    }
+     h4 {
+        font-size: 18px;
+    }
+}
+/*iPhone 5 and smaller format devices*/
+@media only screen and (max-width: 568px) and ( orientation: portrait) {
+    header h5 {
+        font-size: 12px;
+    }
+    header h2 {
+        font-size: 20px;
+    }
+    button.next {
+        padding:7px;
+    }
+    .topImage {
+        height: 120px;
+        width: 120px;
+    }
+    .questionTable h4, .questionTable li {
+        font-size: 16px;
+    }
+}
+/*phone landscape*/
+@media only screen and (max-height: 420px) and ( orientation: landscape) {
+    header h5 {
+        font-size: 12px;
+    }
+    header h2 {
+        font-size: 20px;
+    }
+    button.next {
+        padding:7px;
+    }
+    .coverWrapper,.topImage {
+        display: none;
+    }
+    .questionTable h4, .questionTable li {
+        font-size: 16px;
+    }
+}
+

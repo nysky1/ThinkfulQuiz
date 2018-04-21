@@ -1,5 +1,5 @@
 'use strict';
-const isDebug = true;
+const isDebug = false;
 
 /* EVENT HANDLERS */
 $('.startQuiz').click(function () {
@@ -27,6 +27,10 @@ $('.js-questionAnswerWrapper').on('click', `.js-grade`, function (event) {
 $('.js-questionAnswerWrapper').on('click', `.js-next`, function (event) {
     advanceQuestion();
 })
+$('form').submit( (event) => {
+    dWrite('preventing default submit');    
+    event.preventDefault();
+})
 function generateQuestion() {
     /* Calls the Question Builder HTML and Increment the Question Index */
     let q = generateQuestionTemplate(getCurrentQuestion());
@@ -37,24 +41,28 @@ function generateQuestionTemplate(item) {
     /* Returns the Question HTML*/
     let qNum = QUIZ.currentQuestionIndex + 1; //The Question Number is 1 based
     let q = `<section>
+        <fieldset>         
         <div class="col-12">
-        <div class="questionTable">
-        <h4>${qNum}. ${item.questionText}</h4>
-        <ul>
-        ${item.answers.map(answer => `<li class="js-item-index-element"><input type=radio name="answer" id="answer" class="radio rdoAnswer" value='${answer}'>${answer}</li>`).join('')}
-        </ul>
-            <button class="next js-grade" role="button" aria-pressed="false">
-                <span class="button-label">Submit</span>
-            </button>
+        <div class="questionTable">      
+            <legend class="">
+            <h4>${qNum}. ${item.questionText}</h4>
+            </legend>
+            <ul>
+            ${item.answers.map(answer => `<li class="js-item-index-element"><input type=radio name="answer" id="answer" class="radio rdoAnswer" value='${answer}'>${answer}</li>`).join('')}
+            </ul>
+                <button class="next js-grade" role="button" aria-pressed="false">
+                    <span class="button-label">Submit</span>
+                </button>
+            </div>
         </div>
         </div>
+        </fieldset> 
     </section>`;
     return q;
 }
 function generateGradeQuestionTemplate(questionItem, answerIndex) {
     let isCorrect = questionItem.correctAnswerIndex === answerIndex;
 
-    questionItem.userAnswerIndex = answerIndex;  //mark the user answer in the array for tallying later.
     updateScore(isCorrect);
     dWrite(QUIZ);
 
@@ -77,9 +85,8 @@ function generateSummaryView() {
 
     let didWell = QUIZ.scoreCorrect > QUIZ.scoreIncorrect;
     let summaryHtml = `<section role="content">
-         <div class="col-12">
-            
-             <img src="/images/${(didWell) ? "Moonwalk" : "HeadShake"}.gif" height=300 width=300 alt="${(didWell) ? "Michael does the moon walk" : "Michael shakes his head 'No'"}" />
+        <div class="col-12">            
+             <img class="topImage" src="/images/${(didWell) ? "Moonwalk" : "HeadShake"}.gif" height=300 width=300 alt="${(didWell) ? "Michael does the moon walk" : "Michael shakes his head 'No'"}" />
              <div class="scoreSummary scoreTable">
                 <h4>Correct: ${QUIZ.scoreCorrect}</h4>
              </div>
@@ -181,9 +188,6 @@ function resetQuiz() {
     QUIZ.scoreCorrect = 0;
     QUIZ.scoreIncorrect = 0;
     QUIZ.currentQuestionIndex = 0;
-    QUIZ.questions.forEach((item) => {
-        item.userAnswerIndex = 0;
-    });
 }
 /* BEGIN VALIDATION */
 function validateEntry(answerIndex) {
