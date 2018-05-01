@@ -20,12 +20,12 @@ const QUIZ =  {
         correctAnswerIndex: 2
       },
       {
-        questionText: 'What year did Michael release his first solo album?"',
+        questionText: 'What year did Michael release his first solo album?',
         answers: ["1977", "1978", "1979", "1980" ],
         correctAnswerIndex: 2
       },
       {
-        questionText: 'Who was the primary producer behind Michael Jackson during his solo career?"',
+        questionText: 'Who was the primary producer behind Michael Jackson during his solo career?',
         answers: ["Giorgio Moroder", "Prince", "Trevor Horn", "Quincy Jones" ],
         correctAnswerIndex: 3
       }

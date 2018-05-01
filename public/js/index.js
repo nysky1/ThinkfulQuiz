@@ -100,11 +100,11 @@ function generateSummaryView() {
                  </button>
              </div>
          </div>
-         <!--audio autoplay loop>
+         <audio autoplay loop>
             <source src="/mp3/wantme.ogg" type="audio/ogg">
             <source src="/mp3/wantme.mp3" type="audio/mpeg">
         Your browser does not support the audio tag.
-        </audio-->
+        </audio>
      </section>`;
     return summaryHtml;
 }
