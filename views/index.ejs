@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css">
   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-  <link rel="stylesheet" href="/css/grid.css">
-  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="css/grid.css">
+  <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
   <header role="banner">
@@ -17,11 +17,11 @@
       </div>
     </div>
   </header>
-  <form>
+ 
     <main role="main">
       <div class="row">
         <div class="col-12 coverWrapper">
-          <img class="imgCover topImage" src="/images/Cover.jpg" alt="Michael Jackson's Thriller Album Cover" / >
+          <img class="imgCover topImage" src="images/Cover.jpg" alt="Michael Jackson's Thriller Album Cover" / >
         </div>
       </div>
       <div id="introWrapper" >
@@ -32,7 +32,7 @@
         </div>
         <div class="row">
           <div class="col-12">
-            <button class="startQuiz next" role="button" aria-pressed="false">
+            <button class="startQuiz next" role="button" aria-pressed="false"s>
               Start Quiz
             </button>
           </div>
@@ -41,22 +41,22 @@
       <div class="col-12 validator hidden">
           Please choose an answer!
       </div>
-      <div class="js-questionAnswerWrapper textInverse">        
+      <div class="js-questionAnswerWrapper textInverse" aria-live="assertive">        
       </div>
     </main>
-</form>
+
   <footer>
     <section role="content" class="footerWrapper footerTable hidden">
       <div class="col-12">
           <div class="textInverse">Question <span class="js-questionIndex"></span> of <span class="js-questionCount"></span></div>          
       </div>
-      <div class="col-12 score hidden">
+      <div class="col-12 score">
           <div class="textInverse">Score: <span class="js-score-correct"></span> Correct, <span class="js-score-incorrect"></span> Incorrect</div>
       </div>
     </section>
   </footer>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script type="text/javascript" src="../js/index.js"></script>
-  <script type="text/javascript" src="../js/quiz.js"></script>
+  <script type="text/javascript" src="js/index.js"></script>
+  <script type="text/javascript" src="js/quiz.js"></script>
 </body>
 </html>

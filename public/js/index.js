@@ -1,62 +1,74 @@
 'use strict';
-const isDebug = false;
+const isDebug = true;
 
-/* EVENT HANDLERS */
-$('.startQuiz').click(function () {
-    toggleBackground(false);
-    loadQuiz();
-});
+/* QUIZ EVENT LISTENER */
+function handleStartQuiz() {
+    $('.startQuiz').click( event => {
+        toggleBackground(false);
+        loadQuiz();
+    });
+}
+function handleFormSubmit() {
+    $('.frmMain').submit( event => {
+        dWrite('preventing default submit');
+        event.preventDefault();
+    })
+}
 /* DELEGATES */
-$('.js-questionAnswerWrapper').on('click', `.js-resetQuiz`, function (event) {
-    resetQuiz();
-    toggleCoverImage()
-    toggleBackground(false);
-    loadQuiz();
-});
-$('.js-questionAnswerWrapper').on('click', `.js-grade`, function (event) {
-    let answerIndex = getAnswerIndexfromEvent(event.currentTarget);
-    let bIsValid = validateEntry(answerIndex);
-    if (bIsValid) {
-        dWrite('grading question');
-        let answerHtml = generateGradeQuestionTemplate(getCurrentQuestion(), answerIndex);
-        toggleCoverImage();
+function handleResetQuiz() {
+    $('.js-questionAnswerWrapper').on('click', `.js-resetQuiz`, function () {
+        resetQuiz();
+        toggleCoverImage()
+        toggleBackground(false);
+        loadQuiz();
+    });
+}
+function handleGradeQuestion() {
+    $('.js-questionAnswerWrapper').on('click', `.js-grade`, function (event) {
+        event.preventDefault();
+        let answerIndex = getAnswerIndexfromEvent(event.currentTarget);
+        let bIsValid = validateEntry(answerIndex);
 
-        $('.js-questionAnswerWrapper').html(answerHtml);
-    };
-})
-$('.js-questionAnswerWrapper').on('click', `.js-next`, function (event) {
-    advanceQuestion();
-})
-$('form').submit( (event) => {
-    dWrite('preventing default submit');    
-    event.preventDefault();
-})
+        if (bIsValid) {
+            dWrite('grading question');
+            let answerHtml = generateGradeQuestionTemplate(getCurrentQuestion(), answerIndex);
+            toggleCoverImage();
+            $('.js-questionAnswerWrapper').html(answerHtml);
+        };
+    })
+}
+function handleNextButton() {
+    $('.js-questionAnswerWrapper').on('click', `.js-next`, function () {
+        advanceQuestion();
+    })    
+}
+/* MAIN FUNCTIONS */
 function generateQuestion() {
     /* Calls the Question Builder HTML and Increment the Question Index */
     let q = generateQuestionTemplate(getCurrentQuestion());
     $('.js-questionAnswerWrapper').html(q);
     $('.js-questionIndex').html(getCurrentQuestionIndex() + 1);
+    checkFirstRadio();
 }
 function generateQuestionTemplate(item) {
     /* Returns the Question HTML*/
     let qNum = QUIZ.currentQuestionIndex + 1; //The Question Number is 1 based
     let q = `<section>
+        <form class='frmMain'>
         <fieldset>         
         <div class="col-12">
         <div class="questionTable">      
             <legend class="">
             <h4>${qNum}. ${item.questionText}</h4>
-            </legend>
-            <ul>
-            ${item.answers.map(answer => `<li class="js-item-index-element"><input type=radio name="answer" id="answer" class="radio rdoAnswer" value='${answer}'>${answer}</li>`).join('')}
-            </ul>
+            </legend>           
+            ${item.answers.map(answer => `<label class="js-item-index-element"><input type=radio name="answer" class="radio rdoAnswer" value='${answer}'><span class='lblAnswer'>${answer}</span></label>`).join('')}            
                 <button class="next js-grade" role="button" aria-pressed="false">
                     <span class="button-label">Submit</span>
                 </button>
-            </div>
         </div>
         </div>
-        </fieldset> 
+        </fieldset>
+        </form> 
     </section>`;
     return q;
 }
@@ -68,11 +80,11 @@ function generateGradeQuestionTemplate(questionItem, answerIndex) {
 
     let answerHtml = `<section role="content">
         <div class="col-12">
-            <img class="topImage" src="/images/${(isCorrect) ? "Moonwalk" : "HeadShake"}.gif" height=300 width=300 alt="${(isCorrect) ? "Michael does the moon walk" : "Michael shakes his head 'No'"}" />
+            <img class="topImage" src="images/${(isCorrect) ? "Moonwalk" : "HeadShake"}.gif" height=300 width=300 alt="${(isCorrect) ? "Good job.  Michael does the moon walk" : "Oops. Michael shakes his head 'No'"}" />
             <div class="answerTable">
                 <h4 class="${(isCorrect) ? "correctGreen" : "incorrectRed"}" >You are ${(isCorrect) ? "Correct" : "Incorrect"}!</h4>
                 <h3>The correct answer is ${questionItem.answers[questionItem.correctAnswerIndex]}.</h3>
-                <button class="next js-next" role="button" aria-pressed="false">
+                <button class="next js-next" role="button" aria-pressed="false" >
                     <span class="button-label">Next</span>
                 </button>
             </div>
@@ -86,7 +98,7 @@ function generateSummaryView() {
     let didWell = QUIZ.scoreCorrect > QUIZ.scoreIncorrect;
     let summaryHtml = `<section role="content">
         <div class="col-12">            
-             <img class="topImage" src="/images/${(didWell) ? "Moonwalk" : "HeadShake"}.gif" height=300 width=300 alt="${(didWell) ? "Michael does the moon walk" : "Michael shakes his head 'No'"}" />
+             <img class="topImage" src="images/${(didWell) ? "Moonwalk" : "HeadShake"}.gif" height=300 width=300 alt="${(didWell) ? "Nice job!  Michael does the moon walk" : "Keep trying!  Michael shakes his head 'No'"}" />
              <div class="scoreSummary scoreTable">
                 <h4>Correct: ${QUIZ.scoreCorrect}</h4>
              </div>
@@ -100,11 +112,6 @@ function generateSummaryView() {
                  </button>
              </div>
          </div>
-         <audio autoplay loop>
-            <source src="/mp3/wantme.ogg" type="audio/ogg">
-            <source src="/mp3/wantme.mp3" type="audio/mpeg">
-        Your browser does not support the audio tag.
-        </audio>
      </section>`;
     return summaryHtml;
 }
@@ -133,12 +140,16 @@ function advanceQuestion() {
 }
 function updateScore(isCorrect) {
     //show the score panel and update values
-    $('.score').removeClass("hidden");
     QUIZ.scoreCorrect += (isCorrect) ? 1 : 0;          //give credit to user if correct.
-    QUIZ.scoreIncorrect += (!isCorrect) ? 1 : 0;          //increment incorrec.
+    QUIZ.scoreIncorrect += (!isCorrect) ? 1 : 0;          //increment incorrect.
     $('.js-score-correct').html(QUIZ.scoreCorrect);
     $('.js-score-incorrect').html(QUIZ.scoreIncorrect);
 }
+/* UTILITIES */
+function checkFirstRadio() {
+    $('.questionTable input[type=radio]:first').attr('checked', true);
+}
+
 /* CLASS TOGGLES */
 function toggleBackground(resetToInit) {
     //Hides the Intro and adds a mask to the Cover Image
@@ -152,6 +163,8 @@ function toggleCoverImage() {
 }
 function toggleFooter() {
     $('.footerWrapper').toggleClass('hidden');
+    $('.js-score-correct').html(0);
+    $('.js-score-incorrect').html(0);
 }
 /* END CLASS TOGGLES */
 /* INDEX FUNCTIONS */
@@ -206,6 +219,20 @@ function validateEntry(answerIndex) {
     }
 }
 /* END VALIDATION */
+
+/* DEBUG */
 function dWrite(item) {
     (isDebug) ? console.log(`${item}`) : '';
 }
+
+function prepareQuizListeners() {
+    handleStartQuiz();
+    handleFormSubmit();
+    handleGradeQuestion();
+    handleNextButton();
+    handleResetQuiz();
+}
+
+/* WATCH EVENTS */
+$(prepareQuizListeners());
+/* END WATCH EVENTS*/

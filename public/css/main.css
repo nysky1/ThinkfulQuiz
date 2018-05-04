@@ -92,19 +92,24 @@ button:hover {
 .questionTable h4 {
     margin:0;
 }
+
 fieldset {
     border: solid 1px #999;
     max-width: 400px;
     margin:0 auto;
 }
 
-ul {
-    list-style-type: none;
-}
-ul li {
+label {
     text-align: left;
-    height:35px;
+    height:25px;
+    padding-left:30px;
+    display: flex;
+    line-height: 25px;
 }
+legend {
+    padding-bottom: 8px;
+}
+
 /* RADIO STYLES*/
 .rdoAnswer {margin-right:15px;}
 
